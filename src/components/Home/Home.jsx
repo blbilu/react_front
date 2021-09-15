@@ -308,7 +308,7 @@ export default function Basic() {
                 <MDBRow>
                   <MDBCol md="12">
                     <label htmlFor="name" className="grey-text">
-                      Name <span style="color: red">*</span>
+                      Name <span style={{color: 'red'}}>*</span>
                     </label>
                     <input
                       type="text"
@@ -320,7 +320,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="emailid" className="grey-text">
-                      Email ID <span style="color: red">*</span>
+                      Email ID <span style={{color: 'red'}}>*</span>
                     </label>
                     <input
                       type="email"
@@ -332,7 +332,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="age" className="grey-text">
-                      Age <span style="color: red">*</span>
+                      Age <span style={{color: 'red'}}>*</span>
                     </label>
                     <input
                       type="text"
@@ -344,7 +344,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="mobile" className="grey-text">
-                      Mobile <span style="color: red">*</span>
+                      Mobile <span style={{color: 'red'}}>*</span>
                     </label>
                     <input
                       type="text"
@@ -356,7 +356,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="address" className="grey-text">
-                      Address <span style="color: red">*</span>
+                      Address <span style={{color: 'red'}}>*</span>
                     </label>
                     <textarea
                       type="text"
