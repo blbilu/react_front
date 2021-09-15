@@ -53,9 +53,58 @@ export default function Basic() {
     data: [],
   });
 
+  const [searchkey, setSearchKey] = React.useState("");
+
+  // Search modified with minimum request hit
+
+  useEffect(() => {
+    const searchRequest = setTimeout(() => {
+      searchEmployee(searchkey).then((res) => {
+        setState((prev) => ({
+          ...prev,
+          data: res,
+        }));
+      });
+    }, 500);
+
+    return () => {
+      clearTimeout(searchRequest);
+    };
+  }, [searchkey]);
+
   useEffect(() => {
     loadData();
   }, []);
+
+  // useEffect(() => {
+  //   const searchRequest = setTimeout(() => {
+  //     console.log("Checking search request");
+  //     searchEmployee(value).then((res) => {
+  //       setState((prev) => ({
+  //         ...prev,
+  //         data: res,
+  //       }));
+  //     });
+  //   }, 500);
+
+  //   return () => {
+  //     console.log("cleanup");
+  //     clearTimeout(searchRequest);
+  //   };
+  // }, []);
+
+  //search handler
+  const search = (e) => {
+    const { value } = e.target;
+    setSearchKey(value);
+    // searchEmployee(value).then((res) => {
+    //   setState(prev=>({
+    //     ...prev,
+    //     data : res
+    //   }))
+    // });
+  };
+
   const loadData = () => {
     getEpmployee().then((res) => {
       setState((prev) => ({
@@ -64,7 +113,17 @@ export default function Basic() {
       }));
     });
   };
+
   const toggle = (type = "", id = "") => {
+    setState((prev) => ({
+      ...prev,
+      modal: {
+        ...prev.modal,
+        show: !prev.modal.show,
+        title: type,
+      },
+    }));
+
     if (type === "Edit" && id) {
       const employee = state.data.find((item) => item.id === id);
       setState((prev) => ({
@@ -79,7 +138,8 @@ export default function Basic() {
         employeeId: employee._id,
       }));
     }
-    if (state.modal.show) {
+
+    if (type == "Add") {
       setState((prev) => ({
         ...prev,
         form: {
@@ -91,20 +151,12 @@ export default function Basic() {
         },
       }));
     }
-    setState((prev) => ({
-      ...prev,
-      modal: {
-        ...prev,
-        show: !prev.modal.show,
-        title: type,
-      },
-    }));
   };
 
   //change handler
   const changeHandler = (e) => {
     const { name, value } = e.target;
-    
+
     setState((prev) => ({
       ...prev,
       form: {
@@ -157,7 +209,8 @@ export default function Basic() {
         },
       }));
       loadData();
-      history.push("/Home");
+      setSearchKey("");
+      //history.push("/Home");
     } catch (err) {
       toast.error("Invalid Rquest");
     }
@@ -176,6 +229,7 @@ export default function Basic() {
         },
       }));
       loadData();
+      setSearchKey("");
     } catch (err) {
       toast.error("Invalid Employee");
     }
@@ -202,17 +256,6 @@ export default function Basic() {
     }
   };
 
-  //search
-  const search = (e) => {
-    const { value } = e.target;
-    searchEmployee(value).then((res) => {
-      setState(prev=>({
-        ...prev,
-        data : res
-      }))
-    });
-  };
-
   return (
     <div>
       <Layout />
@@ -227,6 +270,7 @@ export default function Basic() {
                 placeholder="Search"
                 aria-label="Search"
                 name="search"
+                value={searchkey}
                 onChange={search}
               />
             </form>
@@ -261,41 +305,43 @@ export default function Basic() {
             </tr>
           </thead>
           <tbody>
-            {
-              state.data.length ===0?
+            {state.data.length === 0 ? (
               <tr>
-                <td colSpan="8" align="center">No Employees Found</td>
-              </tr>
-              :
-            state.data.map((item, index) => (
-              <tr key={index}>
-                <td className="text-center">{index + 1}</td>
-                <td className="text-center">{item.id}</td>
-                <td className="">{item.name}</td>
-                <td className="text-center">{item.email}</td>
-                <td className="text-center">{item.phone}</td>
-                <td className="text-center">{item.age}</td>
-                <td className="text-center">{item.address}</td>
-                <td className="btn__p0">
-                  <button
-                    className="btn btn-sm btn-info btn-rounded"
-                    data-toggle="modal"
-                    data-target="#myModal"
-                    onClick={() => toggle("Edit", item.id)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger btn-rounded"
-                    data-toggle="modal"
-                    data-target="#myModal"
-                    onClick={() => handleDelete(item)}
-                  >
-                    Remove
-                  </button>
+                <td colSpan="8" align="center">
+                  No Employees Found
                 </td>
               </tr>
-            ))}
+            ) : (
+              state.data.map((item, index) => (
+                <tr key={index}>
+                  <td className="text-center">{index + 1}</td>
+                  <td className="text-center">{item.id}</td>
+                  <td className="">{item.name}</td>
+                  <td className="text-center">{item.email}</td>
+                  <td className="text-center">{item.phone}</td>
+                  <td className="text-center">{item.age}</td>
+                  <td className="text-center">{item.address}</td>
+                  <td className="btn__p0">
+                    <button
+                      className="btn btn-sm btn-info btn-rounded"
+                      data-toggle="modal"
+                      data-target="#myModal"
+                      onClick={() => toggle("Edit", item.id)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger btn-rounded"
+                      data-toggle="modal"
+                      data-target="#myModal"
+                      onClick={() => handleDelete(item)}
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
         <MDBModal isOpen={state.modal.show} toggle={() => toggle()}>
@@ -308,7 +354,7 @@ export default function Basic() {
                 <MDBRow>
                   <MDBCol md="12">
                     <label htmlFor="name" className="grey-text">
-                      Name <span style={{color: 'red'}}>*</span>
+                      Name <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="text"
@@ -320,7 +366,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="emailid" className="grey-text">
-                      Email ID <span style={{color: 'red'}}>*</span>
+                      Email ID <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="email"
@@ -332,7 +378,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="age" className="grey-text">
-                      Age <span style={{color: 'red'}}>*</span>
+                      Age <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="text"
@@ -344,7 +390,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="mobile" className="grey-text">
-                      Mobile <span style={{color: 'red'}}>*</span>
+                      Mobile <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="text"
@@ -356,7 +402,7 @@ export default function Basic() {
                     />
                     <br />
                     <label htmlFor="address" className="grey-text">
-                      Address <span style={{color: 'red'}}>*</span>
+                      Address <span style={{ color: "red" }}>*</span>
                     </label>
                     <textarea
                       type="text"
