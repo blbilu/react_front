@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+html, body, #root, .container, .row {
+  height: 100%;
+}
+
+.login-box {
+  justify-content: center;
+  align-content: center;
+}
+
+.btn-rounded {
+  border-radius: 10em !important;
+}
+
+table.table td.btn__p0 {
+  padding-top: .2rem !important;
+  padding-bottom: .2rem !important;
+}
+
+.table.table th.action {
+  width: 14rem
+}
+button.close:focus{
+  outline: none;
+}
